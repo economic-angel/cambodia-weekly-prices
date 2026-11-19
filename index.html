@@ -99,6 +99,13 @@ html,body { margin:0; background:var(--color-bg); color:var(--color-fg); font-si
 .pw-udname { display: inline-flex; align-items: center; gap: .4em; min-width: 0; }
 .pw-ico { display: inline-flex; flex: none; width: 1em; height: 1em; }
 .pw-ico svg { display: block; width: 1em; height: 1em; }
+.pw-tview { display: inline-flex; align-self: flex-start; border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); overflow: hidden; }
+.pw-tvbtn { font: inherit; font-size: var(--cds-font-size-caption); padding: 5px 16px; border: 0; background: var(--color-bg); color: var(--color-fg-muted); cursor: pointer; }
+.pw-tvbtn + .pw-tvbtn { border-left: 1px solid var(--color-border-line); }
+.pw-tvbtn[aria-pressed="true"] { background: var(--color-panel); color: var(--color-fg); font-weight: var(--cds-font-weight-medium); }
+.pw-tvbtn:focus-visible { outline: 2px solid var(--pw-down); outline-offset: -2px; }
+.pw-table.pw-v-short .pw-c-l, .pw-table.pw-v-long .pw-c-s { display: none; }
+.pw-table.pw-v-long td.pw-c-l.pw-sep:nth-child(n), .pw-table.pw-v-long th.pw-c-l.pw-sep { border-left: 1px solid var(--color-border-line); }
 
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
@@ -155,24 +162,29 @@ html,body { margin:0; background:var(--color-bg); color:var(--color-fg); font-si
 
   <section class="pw-sec" id="price-table">
     <h2><span data-l="ko" lang="ko">주간·월평균 가격표</span><span data-l="en" lang="en" hidden>Weekly and monthly average prices</span><span data-l="km" lang="km" hidden>តារាងតម្លៃប្រចាំសប្តាហ៍ និងមធ្យមប្រចាំខែ</span></h2>
+    <div class="pw-tview" id="table-view" role="group" aria-label="Table view">
+      <button type="button" class="pw-tvbtn" data-tview="short" aria-pressed="true"><span data-l="ko" lang="ko">단기</span><span data-l="en" lang="en" hidden>Short term</span><span data-l="km" lang="km" hidden>រយៈពេលខ្លី</span></button>
+      <button type="button" class="pw-tvbtn" data-tview="long" aria-pressed="false"><span data-l="ko" lang="ko">장기</span><span data-l="en" lang="en" hidden>Long term</span><span data-l="km" lang="km" hidden>រយៈពេលវែង</span></button>
+    </div>
+    <p class="pw-note"><span data-l="ko" lang="ko">단기: 2주 전·전주·금주와 이번 달·전월 평균 비교 / 장기: 금주를 전년 같은 주와 평년(5년)과 비교</span><span data-l="en" lang="en" hidden>Short term: the last three weeks and this and last month’s averages. Long term: this week against the same week last year and the 5-year normal.</span><span data-l="km" lang="km" hidden>រយៈពេលខ្លី៖ ៣សប្តាហ៍ចុងក្រោយ និងមធ្យមខែនេះ/ខែមុន។ រយៈពេលវែង៖ សប្តាហ៍នេះធៀបនឹងសប្តាហ៍ដូចគ្នាឆ្នាំមុន និងមធ្យម៥ឆ្នាំ។</span></p>
     <div class="pw-tablewrap">
-      <table class="pw-table" data-source="cmp" data-row-key="key">
+      <table class="pw-table pw-v-short" id="price-grid" data-source="cmp" data-row-key="key">
         <thead>
           <tr>
-<th data-field="item"><span data-l="ko" lang="ko">품목</span><span data-l="en" lang="en" hidden>Item</span><span data-l="km" lang="km" hidden>មុខទំនិញ</span></th>
-<th data-field="prev2"><span data-l="ko" lang="ko">2주 전</span><span data-l="en" lang="en" hidden>2 weeks ago</span><span data-l="km" lang="km" hidden>២សប្តាហ៍មុន</span> <span class="pw-thw" data-draw="h2w">—</span></th>
-<th data-field="prev"><span data-l="ko" lang="ko">전주</span><span data-l="en" lang="en" hidden>Last week</span><span data-l="km" lang="km" hidden>សប្តាហ៍មុន</span> <span class="pw-thw" data-draw="h1w">—</span></th>
-<th data-field="cur"><span data-l="ko" lang="ko">금주</span><span data-l="en" lang="en" hidden>This week</span><span data-l="km" lang="km" hidden>សប្តាហ៍នេះ</span> <span class="pw-thw" data-draw="h0w">—</span></th>
-<th data-field="wow"><span data-l="ko" lang="ko">전주 대비</span><span data-l="en" lang="en" hidden>vs last week</span><span data-l="km" lang="km" hidden>ធៀបសប្តាហ៍មុន</span></th>
-<th data-field="m_cur" class="pw-sep"><span data-l="ko" lang="ko">이번 달 평균</span><span data-l="en" lang="en" hidden>Month avg</span><span data-l="km" lang="km" hidden>មធ្យមខែនេះ</span></th>
-<th data-field="vsm"><span data-l="ko" lang="ko">금주/월평균</span><span data-l="en" lang="en" hidden>Week vs month</span><span data-l="km" lang="km" hidden>សប្តាហ៍នេះ/មធ្យមខែ</span></th>
-<th data-field="m_prev"><span data-l="ko" lang="ko">전월 평균</span><span data-l="en" lang="en" hidden>Last month avg</span><span data-l="km" lang="km" hidden>មធ្យមខែមុន</span></th>
-<th data-field="mom"><span data-l="ko" lang="ko">전월 대비</span><span data-l="en" lang="en" hidden>vs last month</span><span data-l="km" lang="km" hidden>ធៀបខែមុន</span></th>
-<th data-field="ly" class="pw-sep"><span data-l="ko" lang="ko">전년 동주</span><span data-l="en" lang="en" hidden>Same week last year</span><span data-l="km" lang="km" hidden>សប្តាហ៍ដូចគ្នាឆ្នាំមុន</span></th>
-<th data-field="yoy"><span data-l="ko" lang="ko">전년 대비</span><span data-l="en" lang="en" hidden>vs last year</span><span data-l="km" lang="km" hidden>ធៀបឆ្នាំមុន</span></th>
-<th data-field="normal"><span data-l="ko" lang="ko">평년</span><span data-l="en" lang="en" hidden>5-year normal</span><span data-l="km" lang="km" hidden>មធ្យម៥ឆ្នាំ</span></th>
-<th data-field="vsn"><span data-l="ko" lang="ko">평년 대비</span><span data-l="en" lang="en" hidden>vs normal</span><span data-l="km" lang="km" hidden>ធៀបមធ្យម៥ឆ្នាំ</span></th>
-<th data-field="days" class="pw-sep"><span data-l="ko" lang="ko">금주 조사일수</span><span data-l="en" lang="en" hidden>Days priced</span><span data-l="km" lang="km" hidden>ចំនួនថ្ងៃប្រមូលតម្លៃ</span></th>
+<th data-field="item" class="pw-c-b"><span data-l="ko" lang="ko">품목</span><span data-l="en" lang="en" hidden>Item</span><span data-l="km" lang="km" hidden>មុខទំនិញ</span></th>
+<th data-field="prev2" class="pw-c-s"><span data-l="ko" lang="ko">2주 전</span><span data-l="en" lang="en" hidden>2 weeks ago</span><span data-l="km" lang="km" hidden>២សប្តាហ៍មុន</span> <span class="pw-thw" data-draw="h2w">—</span></th>
+<th data-field="prev" class="pw-c-s"><span data-l="ko" lang="ko">전주</span><span data-l="en" lang="en" hidden>Last week</span><span data-l="km" lang="km" hidden>សប្តាហ៍មុន</span> <span class="pw-thw" data-draw="h1w">—</span></th>
+<th data-field="cur" class="pw-c-b"><span data-l="ko" lang="ko">금주</span><span data-l="en" lang="en" hidden>This week</span><span data-l="km" lang="km" hidden>សប្តាហ៍នេះ</span> <span class="pw-thw" data-draw="h0w">—</span></th>
+<th data-field="wow" class="pw-c-s"><span data-l="ko" lang="ko">전주 대비</span><span data-l="en" lang="en" hidden>vs last week</span><span data-l="km" lang="km" hidden>ធៀបសប្តាហ៍មុន</span></th>
+<th data-field="m_cur" class="pw-c-s pw-sep"><span data-l="ko" lang="ko">이번 달 평균</span><span data-l="en" lang="en" hidden>Month avg</span><span data-l="km" lang="km" hidden>មធ្យមខែនេះ</span></th>
+<th data-field="vsm" class="pw-c-s"><span data-l="ko" lang="ko">금주/월평균</span><span data-l="en" lang="en" hidden>Week vs month</span><span data-l="km" lang="km" hidden>សប្តាហ៍នេះ/មធ្យមខែ</span></th>
+<th data-field="m_prev" class="pw-c-s"><span data-l="ko" lang="ko">전월 평균</span><span data-l="en" lang="en" hidden>Last month avg</span><span data-l="km" lang="km" hidden>មធ្យមខែមុន</span></th>
+<th data-field="mom" class="pw-c-s"><span data-l="ko" lang="ko">전월 대비</span><span data-l="en" lang="en" hidden>vs last month</span><span data-l="km" lang="km" hidden>ធៀបខែមុន</span></th>
+<th data-field="ly" class="pw-c-l pw-sep"><span data-l="ko" lang="ko">전년 동주</span><span data-l="en" lang="en" hidden>Same week last year</span><span data-l="km" lang="km" hidden>សប្តាហ៍ដូចគ្នាឆ្នាំមុន</span></th>
+<th data-field="yoy" class="pw-c-l"><span data-l="ko" lang="ko">전년 대비</span><span data-l="en" lang="en" hidden>vs last year</span><span data-l="km" lang="km" hidden>ធៀបឆ្នាំមុន</span></th>
+<th data-field="normal" class="pw-c-l"><span data-l="ko" lang="ko">평년</span><span data-l="en" lang="en" hidden>5-year normal</span><span data-l="km" lang="km" hidden>មធ្យម៥ឆ្នាំ</span></th>
+<th data-field="vsn" class="pw-c-l"><span data-l="ko" lang="ko">평년 대비</span><span data-l="en" lang="en" hidden>vs normal</span><span data-l="km" lang="km" hidden>ធៀបមធ្យម៥ឆ្នាំ</span></th>
+<th data-field="days" class="pw-c-l pw-sep"><span data-l="ko" lang="ko">금주 조사일수</span><span data-l="en" lang="en" hidden>Days priced</span><span data-l="km" lang="km" hidden>ចំនួនថ្ងៃប្រមូលតម្លៃ</span></th>
           </tr>
         </thead>
         <tbody data-draw="tbody"></tbody>
@@ -399,6 +411,13 @@ dash.calc('summary', {
       b.setAttribute('aria-pressed', v === L ? 'true' : 'false');
       b.onclick = () => dash.setParams({ lang: v });
     });
+    const tv = params().tview === 'long' ? 'long' : 'short';
+    document.querySelectorAll('.pw-table').forEach((tb) => { tb.classList.toggle('pw-v-long', tv === 'long'); tb.classList.toggle('pw-v-short', tv === 'short'); });
+    document.querySelectorAll('[data-tview]').forEach((b) => {
+      const v = b.getAttribute('data-tview');
+      b.setAttribute('aria-pressed', v === tv ? 'true' : 'false');
+      b.onclick = () => dash.setParams({ tview: v });
+    });
     document.querySelectorAll('.pw-sw').forEach((s) => {
       const k = s.getAttribute('data-sw');
       s.style.background = k === 'm' ? 'var(--cds-chart-muted)' : dash.colors[Number(k)];
@@ -481,14 +500,16 @@ dash.calc('summary', {
     tb.replaceChildren();
     if (!rows) return;
     let cat = null;
-    const cols = [['prev2', fmt], ['prev', fmt], ['cur', fmt, 'pw-cur'], ['wow', fp, 'chg'], ['m_cur', fmt, 'pw-sep'], ['vsm', fp, 'chg'], ['m_prev', fmt], ['mom', fp, 'chg'], ['ly', fmt, 'pw-sep'], ['yoy', fp, 'chg'], ['normal', fmt], ['vsn', fp, 'chg'], ['days', days, 'pw-sep']];
+    const cols = [['prev2', fmt, '', 's'], ['prev', fmt, '', 's'], ['cur', fmt, 'pw-cur', 'b'], ['wow', fp, 'chg', 's'], ['m_cur', fmt, 'pw-sep', 's'], ['vsm', fp, 'chg', 's'], ['m_prev', fmt, '', 's'], ['mom', fp, 'chg', 's'], ['ly', fmt, 'pw-sep', 'l'], ['yoy', fp, 'chg', 'l'], ['normal', fmt, '', 'l'], ['vsn', fp, 'chg', 'l'], ['days', days, 'pw-sep', 'l']];
+    const view = params().tview === 'long' ? 'l' : 's';
+    const ncols = 1 + cols.filter((c) => c[3] === 'b' || c[3] === view).length;
     for (const r of rows) {
-      if (r.cat !== cat) { cat = r.cat; const g = document.createElement('tr'); g.className = 'pw-grp'; const td = document.createElement('td'); td.colSpan = 14; td.textContent = catName(cat); g.append(td); tb.append(g); }
+      if (r.cat !== cat) { cat = r.cat; const g = document.createElement('tr'); g.className = 'pw-grp'; const td = document.createElement('td'); td.colSpan = ncols; td.textContent = catName(cat); g.append(td); tb.append(g); }
       const row = document.createElement('tr'); row.setAttribute('data-key', encodeURIComponent(r.key));
-      const n = document.createElement('td'); n.textContent = itemName(r); row.append(n);
-      for (const [f, fm, c] of cols) {
+      const n = document.createElement('td'); n.textContent = itemName(r); n.className = 'pw-c-b'; row.append(n);
+      for (const [f, fm, c, grp] of cols) {
         const td = document.createElement('td'); td.textContent = fm(r[f]);
-        if (c === 'chg') td.className = cls(r[f]); else if (c) td.className = c;
+        td.className = 'pw-c-' + grp + (c === 'chg' ? (cls(r[f]) ? ' ' + cls(r[f]) : '') : c ? ' ' + c : '');
         row.append(td);
       }
       tb.append(row);
