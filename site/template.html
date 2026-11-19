@@ -5,11 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>캄보디아 주간 농산물 가격 동향 | Cambodia Weekly Farm Price Trends</title>
 <meta name="description" content="CAMAGRIMARKET(AMIS) 전국 시세 기준 주간·월평균 농산물 가격 비교 (한국어 · English · ខ្មែរ)">
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600&family=Noto+Sans+Khmer:wght@400;600&family=Noto+Serif+KR&display=swap">
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400..700&family=Kantumruy+Pro:wght@400..700&display=swap">
 <style>
 :root { --color-fg:#1d2430; --color-fg-muted:#5b6474; --color-bg:#ffffff; --color-panel:#f3f5f8; --color-border-line:#dde2ea;
-  --font-anthropic-sans:"Noto Sans KR","Noto Sans Khmer",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --font-anthropic-sans:system-ui,-apple-system,"Segoe UI",sans-serif;
   --font-anthropic-serif:"Noto Serif KR","Noto Serif Khmer",Georgia,serif;
   --cds-font-size-caption:12.5px; --cds-font-size-body:15px; --cds-font-size-heading:18px; --cds-font-size-title:30px; --cds-font-weight-medium:600;
   --cds-gap-xs:4px; --cds-gap-sm:8px; --cds-gap-md:14px; --cds-gap-lg:20px; --cds-gap-xl:32px;
@@ -27,10 +28,15 @@ html,body { margin:0; background:var(--color-bg); color:var(--color-fg); font-si
 .pw-foot a { color:inherit; }
 
 
-.pw { --pw-up: color-mix(in srgb, #d6336c 72%, var(--color-fg)); --pw-down: color-mix(in srgb, #3b5bdb 72%, var(--color-fg)); --pw-up-bg: color-mix(in srgb, #d6336c 12%, var(--color-panel)); --pw-down-bg: color-mix(in srgb, #3b5bdb 12%, var(--color-panel)); --pw-sans: var(--font-anthropic-sans), "Noto Sans Khmer", "Khmer OS System", "Khmer OS", "Leelawadee UI", sans-serif; --pw-serif: var(--font-anthropic-serif), "Noto Serif Khmer", "Khmer OS Siemreap", "Noto Sans Khmer", serif; display: flex; flex-direction: column; gap: var(--cds-gap-xl); font-family: var(--pw-sans); color: var(--color-fg); }
-.pw [lang="km"] { line-height: 1.75; }
+.pw { --pw-up: color-mix(in srgb, #d6336c 72%, var(--color-fg)); --pw-down: color-mix(in srgb, #3b5bdb 72%, var(--color-fg)); --pw-up-bg: color-mix(in srgb, #d6336c 12%, var(--color-panel)); --pw-down-bg: color-mix(in srgb, #3b5bdb 12%, var(--color-panel)); --pw-f-ko: "Pretendard Variable", Pretendard, "Apple SD Gothic Neo", "Malgun Gothic"; --pw-f-en: "Inter Variable", Inter, "Segoe UI", Roboto; --pw-f-km: "Kantumruy Pro Variable", "Kantumruy Pro", "Noto Sans Khmer", "Khmer OS System", "Leelawadee UI"; --pw-sans: var(--pw-f-ko), var(--pw-f-en), var(--pw-f-km), var(--font-anthropic-sans), sans-serif; --pw-serif: var(--pw-sans); display: flex; flex-direction: column; gap: var(--cds-gap-xl); font-family: var(--pw-sans); color: var(--color-fg); }
+.pw.pw-l-en { --pw-sans: var(--pw-f-en), var(--pw-f-ko), var(--pw-f-km), var(--font-anthropic-sans), sans-serif; }
+.pw.pw-l-km { --pw-sans: var(--pw-f-km), var(--pw-f-en), var(--pw-f-ko), var(--font-anthropic-sans), sans-serif; }
+.pw [lang="ko"] { font-family: var(--pw-f-ko), var(--pw-f-en), sans-serif; }
+.pw [lang="en"] { font-family: var(--pw-f-en), var(--pw-f-ko), sans-serif; }
+.pw [lang="km"] { font-family: var(--pw-f-km), var(--pw-f-en), sans-serif; line-height: 1.75; }
+.pw { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
 .pw, .pw * { word-break: keep-all; overflow-wrap: break-word; line-break: strict; }
-.pw h1 { font-family: var(--pw-serif); font-weight: 400; font-size: var(--cds-font-size-title); margin: 0; text-wrap: balance; }
+.pw h1 { font-family: var(--pw-serif); font-weight: 700; letter-spacing: -0.015em; font-size: var(--cds-font-size-title); margin: 0; text-wrap: balance; }
 .pw h2 { font-size: var(--cds-font-size-heading); font-weight: var(--cds-font-weight-medium); margin: 0; }
 .pw-head { display: flex; flex-direction: column; gap: var(--cds-gap-sm); }
 .pw-topbar { display: flex; flex-direction: column; gap: var(--cds-gap-md); }
@@ -63,11 +69,11 @@ html,body { margin:0; background:var(--color-bg); color:var(--color-fg); font-si
 .pw-udtag { font-size: var(--cds-font-size-caption); font-weight: var(--cds-font-weight-medium); letter-spacing: .04em; margin: 0; }
 .pw-udlist { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--cds-gap-xs); min-height: 4.5em; }
 .pw-udlist li { display: flex; justify-content: space-between; gap: var(--cds-gap-sm); font-variant-numeric: tabular-nums; }
-.pw-udlist li:first-child { font-family: var(--pw-serif); font-size: var(--cds-font-size-heading); }
+.pw-udlist li:first-child { font-family: var(--pw-serif); font-size: var(--cds-font-size-heading); font-weight: 600; }
 .pw-keys { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: var(--cds-gap-sm); min-height: 84px; }
 .pw-key { background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-md); display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .pw-key-name { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
-.pw-key-price { font-family: var(--pw-serif); font-size: var(--cds-font-size-heading); font-variant-numeric: tabular-nums; }
+.pw-key-price { font-family: var(--pw-serif); font-size: var(--cds-font-size-heading); font-weight: 600; font-variant-numeric: tabular-nums; }
 .pw-key-chg { font-size: var(--cds-font-size-caption); font-variant-numeric: tabular-nums; }
 .pw-sec { display: flex; flex-direction: column; gap: var(--cds-gap-sm); }
 .pw-note { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); margin: 0; }
@@ -387,6 +393,7 @@ dash.calc('summary', {
   dash.onData(() => {
     const L = lang();
     document.querySelectorAll('[data-l]').forEach((el) => { el.hidden = el.getAttribute('data-l') !== L; });
+    document.querySelectorAll('.pw').forEach((el) => { el.classList.toggle('pw-l-en', L === 'en'); el.classList.toggle('pw-l-km', L === 'km'); el.classList.toggle('pw-l-ko', L === 'ko'); });
     document.querySelectorAll('[data-setlang]').forEach((b) => {
       const v = b.getAttribute('data-setlang');
       b.setAttribute('aria-pressed', v === L ? 'true' : 'false');
