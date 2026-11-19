@@ -166,8 +166,7 @@ def main():
             av = lambda k: jround(sum(wk[k]) / len(wk[k])) if k in wk else None
             cur = [av(k) for k in keys]
             if all(v is None for v in cur):
-                if s == "WP":
-                    no_data.append(KO.get(m["code"], m["en"]))
+                no_data.append(m["code"])
                 continue
             for i, w in enumerate(weeks):
                 y, n = keys[i]
@@ -194,6 +193,7 @@ def main():
     with open(os.path.join(ROOT, "data", "info.json"), "w", encoding="utf-8") as f:
         json.dump(info, f, ensure_ascii=False, indent=2)
 
+    no_data = [KO.get(c, c) for c in dict.fromkeys(no_data) if no_data.count(c) == len(SERIES)]  # no wholesale and no retail price
     report = build_report(weekly, weeks, daily_recent, invalid, no_data, anchor)
     with open(os.path.join(ROOT, "data", "report.json"), "w", encoding="utf-8") as f:
         json.dump(report, f, ensure_ascii=False, indent=2)
