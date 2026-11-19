@@ -53,6 +53,69 @@ def week_label(monday):
     return f"{monday.month}월 {(monday.day - 1) // 7 + 1}주"
 
 
+# Thresholds for the weekly data check
+WOW_ALERT = 30.0      # % change from the previous week
+NORMAL_ALERT = 50.0   # % gap from the 5-year normal
+DAILY_FACTOR = 3.0    # a daily price above 3x or below 1/3 of the median of the 8 weeks before
+
+
+def pct(a, b):
+    return None if a is None or b in (None, 0) else round((a / b - 1) * 100, 1)
+
+
+def build_report(weekly, weeks, daily_recent, invalid, no_data, anchor):
+    """Lists values worth a second look in the latest complete week."""
+    latest, prev = weeks[-1].isoformat(), weeks[-2].isoformat()
+    rows = {}
+    for r in weekly:
+        rows.setdefault(r["key"], {})[r["week"]] = r
+    issues = {"missing": [], "spike": [], "normal_gap": [], "daily_outlier": [], "invalid": [], "inversion": [], "single_day": []}
+    for key, wk in rows.items():
+        c, p = wk.get(latest), wk.get(prev)
+        if c is None:
+            continue
+        name = f"{c['item']} ({c['type']})"
+        if c["price"] is None:
+            last = max((w for w, r in wk.items() if r["price"] is not None), default=None)
+            issues["missing"].append({"item": name, "last_priced_week": last, "last_price": wk[last]["price"] if last else None})
+            continue
+        if c["days"] == 1:
+            issues["single_day"].append(name)
+        ch = pct(c["price"], p["price"] if p else None)
+        if ch is not None and abs(ch) >= WOW_ALERT:
+            issues["spike"].append({"item": name, "prev": p["price"], "cur": c["price"], "change": ch, "days": c["days"]})
+        g = pct(c["price"], c["normal"])
+        if g is not None and abs(g) >= NORMAL_ALERT:
+            issues["normal_gap"].append({"item": name, "cur": c["price"], "normal": c["normal"], "gap": g})
+        vals = daily_recent.get(key, [])
+        base = sorted(v for d, v in vals if d < anchor)
+        if len(base) >= 4:
+            med = base[len(base) // 2]
+            for d, v in vals:
+                if d >= anchor and (v > med * DAILY_FACTOR or v < med / DAILY_FACTOR):
+                    issues["daily_outlier"].append({"item": name, "date": d.isoformat(), "price": jround(v), "median_8w": jround(med)})
+    for key, bad in invalid.items():
+        code, t = key.split("|")
+        name = f"{KO.get(code, code)} ({t})"
+        for d, v in bad:
+            issues["invalid"].append({"item": name, "date": d, "value": v})
+    for key, wk in rows.items():
+        code, t = key.split("|")
+        if t != "도매":
+            continue
+        w, r = wk.get(latest), rows.get(code + "|소매", {}).get(latest)
+        if w and r and w["price"] and r["price"] and r["price"] < w["price"]:
+            issues["inversion"].append({"item": w["item"], "wholesale": w["price"], "retail": r["price"]})
+    issues["spike"].sort(key=lambda x: -abs(x["change"]))
+    issues["normal_gap"].sort(key=lambda x: -abs(x["gap"]))
+    priced = [r for r in weekly if r["week"] == latest and r["price"] is not None]
+    return {"week": latest, "week_label": week_label(weeks[-1]), "week_end": (weeks[-1] + dt.timedelta(days=6)).isoformat(),
+            "priced_series": len(priced), "series": len([1 for r in weekly if r["week"] == latest]),
+            "thresholds": {"wow_pct": WOW_ALERT, "normal_pct": NORMAL_ALERT, "daily_factor": DAILY_FACTOR},
+            "no_data_13_weeks": sorted(set(no_data)), "issues": issues,
+            "issue_count": sum(len(v) for k, v in issues.items() if k != "single_day")}
+
+
 def main():
     today = dt.date.today()
     if len(sys.argv) > 1:
@@ -75,29 +138,37 @@ def main():
     order = {m["code"]: i for i, m in enumerate(meta)}
 
     weekly, monthly = [], []
+    recent_from = anchor - dt.timedelta(days=7 * 8)  # latest week + 8 weeks before, for the daily outlier check
+    daily_recent, invalid, no_data = {}, {}, []
     m_from = dt.date(end.year - 2, end.month, 1).strftime("%Y-%m")
     for m in meta:
         for s, sko in SERIES:
             p = get(f"/home/price?locale=2&commodityCode={m['code']}&dataseries={s}&startDate={start}&endDate={end}")
             prices = (p[0] if p else {}).get("prices", [])
             wk, mo = {}, {}
+            key = f"{m['code']}|{sko}"
             for x in prices:
-                try:
-                    v = float(x["price"])
-                except (TypeError, ValueError):
-                    continue
-                if not math.isfinite(v) or v <= 0:
-                    continue
                 d = dt.date.fromisoformat(x["date"][:10])
                 if d > end:
                     continue
+                try:
+                    v = float(x["price"])
+                except (TypeError, ValueError):
+                    v = None
+                if v is None or not math.isfinite(v) or v <= 0 or v >= 999999:  # AMIS uses 999999.99 as a placeholder
+                    if d >= anchor:
+                        invalid.setdefault(key, []).append((d.isoformat(), x.get("price")))
+                    continue
+                if d >= recent_from:
+                    daily_recent.setdefault(key, []).append((d, v))
                 wk.setdefault(iso_key(d), []).append(v)
                 mo.setdefault(x["date"][:7], []).append(v)
             av = lambda k: jround(sum(wk[k]) / len(wk[k])) if k in wk else None
             cur = [av(k) for k in keys]
             if all(v is None for v in cur):
+                if s == "WP":
+                    no_data.append(KO.get(m["code"], m["en"]))
                 continue
-            key = f"{m['code']}|{sko}"
             for i, w in enumerate(weeks):
                 y, n = keys[i]
                 vs = [av((y - j, n)) for j in range(1, 6)]
@@ -122,6 +193,10 @@ def main():
     info = {"collected": today.isoformat(), "anchor_week": anchor.isoformat(), "weeks": [w.isoformat() for w in weeks], "weekly_rows": len(weekly), "monthly_rows": len(monthly)}
     with open(os.path.join(ROOT, "data", "info.json"), "w", encoding="utf-8") as f:
         json.dump(info, f, ensure_ascii=False, indent=2)
+
+    report = build_report(weekly, weeks, daily_recent, invalid, no_data, anchor)
+    with open(os.path.join(ROOT, "data", "report.json"), "w", encoding="utf-8") as f:
+        json.dump(report, f, ensure_ascii=False, indent=2)
 
     tpl = open(os.path.join(ROOT, "site", "template.html"), encoding="utf-8").read()
     data = json.dumps({"weekly": weekly, "monthly": monthly}, ensure_ascii=False, separators=(",", ":"))

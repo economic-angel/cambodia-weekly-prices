@@ -16,12 +16,20 @@ permissions:
 jobs:
   update:
     runs-on: ubuntu-latest
+    env:
+      SMTP_HOST: ${{ secrets.SMTP_HOST }}
+      SMTP_PORT: ${{ secrets.SMTP_PORT }}
+      SMTP_USER: ${{ secrets.SMTP_USER }}
+      SMTP_PASS: ${{ secrets.SMTP_PASS }}
+      MAIL_FROM: ${{ secrets.MAIL_FROM }}
+      MAIL_TO: ${{ vars.MAIL_TO }}
+      RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Fetch AMIS prices and rebuild the page
+      - name: Fetch AMIS prices, check the data and rebuild the page
         run: python scripts/update.py ${{ github.event.inputs.week }}
       - name: Commit if anything changed
         run: |
@@ -31,3 +39,8 @@ jobs:
           if git diff --cached --quiet; then echo "No changes"; exit 0; fi
           git commit -m "Weekly price update $(date -u +%Y-%m-%d)"
           git push
+      - name: Email the update result and data check
+        run: python scripts/send_report.py
+      - name: Email a failure notice
+        if: failure()
+        run: python scripts/send_report.py --failed
