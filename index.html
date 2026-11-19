@@ -106,6 +106,7 @@ html,body { margin:0; background:var(--color-bg); color:var(--color-fg); font-si
 .pw-tvbtn:focus-visible { outline: 2px solid var(--pw-down); outline-offset: -2px; }
 .pw-table.pw-v-short .pw-c-l, .pw-table.pw-v-long .pw-c-s { display: none; }
 .pw-table.pw-v-long td.pw-c-l.pw-sep:nth-child(n), .pw-table.pw-v-long th.pw-c-l.pw-sep { border-left: 1px solid var(--color-border-line); }
+.pw-table th.pw-days, .pw-table td.pw-days { font-size: 11px; color: var(--color-fg-muted); font-weight: 400; padding-left: 8px; padding-right: 8px; }
 
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
@@ -166,7 +167,7 @@ html,body { margin:0; background:var(--color-bg); color:var(--color-fg); font-si
       <button type="button" class="pw-tvbtn" data-tview="short" aria-pressed="true"><span data-l="ko" lang="ko">단기</span><span data-l="en" lang="en" hidden>Short term</span><span data-l="km" lang="km" hidden>រយៈពេលខ្លី</span></button>
       <button type="button" class="pw-tvbtn" data-tview="long" aria-pressed="false"><span data-l="ko" lang="ko">장기</span><span data-l="en" lang="en" hidden>Long term</span><span data-l="km" lang="km" hidden>រយៈពេលវែង</span></button>
     </div>
-    <p class="pw-note"><span data-l="ko" lang="ko">단기: 2주 전·전주·금주와 이번 달·전월 평균 비교 / 장기: 금주를 전년 같은 주와 평년(5년)과 비교</span><span data-l="en" lang="en" hidden>Short term: the last three weeks and this and last month’s averages. Long term: this week against the same week last year and the 5-year normal.</span><span data-l="km" lang="km" hidden>រយៈពេលខ្លី៖ ៣សប្តាហ៍ចុងក្រោយ និងមធ្យមខែនេះ/ខែមុន។ រយៈពេលវែង៖ សប្តាហ៍នេះធៀបនឹងសប្តាហ៍ដូចគ្នាឆ្នាំមុន និងមធ្យម៥ឆ្នាំ។</span></p>
+    <p class="pw-note"><span data-l="ko" lang="ko">단기: 2주 전·전주·금주와 이번 달·전월 평균 비교(끝 열은 금주 조사일수) / 장기: 금주를 전년 같은 주와 평년(5년)과 비교</span><span data-l="en" lang="en" hidden>Short term: the last three weeks and this and last month’s averages, with the days priced this week at the end. Long term: this week against the same week last year and the 5-year normal.</span><span data-l="km" lang="km" hidden>រយៈពេលខ្លី៖ ៣សប្តាហ៍ចុងក្រោយ និងមធ្យមខែនេះ/ខែមុន (ជួរចុងក្រោយ៖ ចំនួនថ្ងៃប្រមូលតម្លៃ)។ រយៈពេលវែង៖ សប្តាហ៍នេះធៀបនឹងសប្តាហ៍ដូចគ្នាឆ្នាំមុន និងមធ្យម៥ឆ្នាំ។</span></p>
     <div class="pw-tablewrap">
       <table class="pw-table pw-v-short" id="price-grid" data-source="cmp" data-row-key="key">
         <thead>
@@ -184,7 +185,7 @@ html,body { margin:0; background:var(--color-bg); color:var(--color-fg); font-si
 <th data-field="yoy" class="pw-c-l"><span data-l="ko" lang="ko">전년 대비</span><span data-l="en" lang="en" hidden>vs last year</span><span data-l="km" lang="km" hidden>ធៀបឆ្នាំមុន</span></th>
 <th data-field="normal" class="pw-c-l"><span data-l="ko" lang="ko">평년</span><span data-l="en" lang="en" hidden>5-year normal</span><span data-l="km" lang="km" hidden>មធ្យម៥ឆ្នាំ</span></th>
 <th data-field="vsn" class="pw-c-l"><span data-l="ko" lang="ko">평년 대비</span><span data-l="en" lang="en" hidden>vs normal</span><span data-l="km" lang="km" hidden>ធៀបមធ្យម៥ឆ្នាំ</span></th>
-<th data-field="days" class="pw-c-l pw-sep"><span data-l="ko" lang="ko">금주 조사일수</span><span data-l="en" lang="en" hidden>Days priced</span><span data-l="km" lang="km" hidden>ចំនួនថ្ងៃប្រមូលតម្លៃ</span></th>
+<th data-field="days" class="pw-c-s pw-sep pw-days"><span data-l="ko" lang="ko">조사일수</span><span data-l="en" lang="en" hidden>Days priced</span><span data-l="km" lang="km" hidden>ចំនួនថ្ងៃប្រមូលតម្លៃ</span></th>
           </tr>
         </thead>
         <tbody data-draw="tbody"></tbody>
@@ -500,7 +501,7 @@ dash.calc('summary', {
     tb.replaceChildren();
     if (!rows) return;
     let cat = null;
-    const cols = [['prev2', fmt, '', 's'], ['prev', fmt, '', 's'], ['cur', fmt, 'pw-cur', 'b'], ['wow', fp, 'chg', 's'], ['m_cur', fmt, 'pw-sep', 's'], ['vsm', fp, 'chg', 's'], ['m_prev', fmt, '', 's'], ['mom', fp, 'chg', 's'], ['ly', fmt, 'pw-sep', 'l'], ['yoy', fp, 'chg', 'l'], ['normal', fmt, '', 'l'], ['vsn', fp, 'chg', 'l'], ['days', days, 'pw-sep', 'l']];
+    const cols = [['prev2', fmt, '', 's'], ['prev', fmt, '', 's'], ['cur', fmt, 'pw-cur', 'b'], ['wow', fp, 'chg', 's'], ['m_cur', fmt, 'pw-sep', 's'], ['vsm', fp, 'chg', 's'], ['m_prev', fmt, '', 's'], ['mom', fp, 'chg', 's'], ['ly', fmt, 'pw-sep', 'l'], ['yoy', fp, 'chg', 'l'], ['normal', fmt, '', 'l'], ['vsn', fp, 'chg', 'l'], ['days', days, 'pw-sep pw-days', 's']];
     const view = params().tview === 'long' ? 'l' : 's';
     const ncols = 1 + cols.filter((c) => c[3] === 'b' || c[3] === view).length;
     for (const r of rows) {
