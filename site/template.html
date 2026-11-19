@@ -159,6 +159,19 @@ html,body { margin:0; background:var(--color-bg); color:var(--color-fg); font-si
     <div class="pw-keys" data-draw="keycards" data-source="cmp"></div>
   </section>
 
+  <section class="pw-sec" id="trend">
+    <div class="pw-trendhead">
+      <h2><span data-l="ko" lang="ko">품목별 주간 추이 (최근 12주)</span><span data-l="en" lang="en" hidden>Weekly trend by item (last 12 weeks)</span><span data-l="km" lang="km" hidden>និន្នាការប្រចាំសប្តាហ៍ តាមមុខទំនិញ (១២សប្តាហ៍ចុងក្រោយ)</span></h2>
+      <label for="f-item" class="pw-note"><span data-l="ko" lang="ko">품목</span><span data-l="en" lang="en" hidden>Item</span><span data-l="km" lang="km" hidden>មុខទំនិញ</span><select class="dash-select" id="f-item" data-draw="itemsel" data-source="weekly" aria-label="Item"></select></label>
+    </div>
+    <ul class="pw-legend" id="trend-legend">
+      <li><span aria-hidden="true" class="pw-sw" data-sw="0"></span><span data-l="ko" lang="ko">올해</span><span data-l="en" lang="en" hidden>This year</span><span data-l="km" lang="km" hidden>ឆ្នាំនេះ</span></li>
+      <li><span aria-hidden="true" class="pw-sw" data-sw="1"></span><span data-l="ko" lang="ko">전년 동주</span><span data-l="en" lang="en" hidden>Same week last year</span><span data-l="km" lang="km" hidden>សប្តាហ៍ដូចគ្នាឆ្នាំមុន</span></li>
+      <li><span aria-hidden="true" class="pw-sw" data-sw="m"></span><span data-l="ko" lang="ko">평년</span><span data-l="en" lang="en" hidden>5-year normal</span><span data-l="km" lang="km" hidden>មធ្យម៥ឆ្នាំ</span></li>
+    </ul>
+    <div class="pw-chartbox" data-draw="trend" data-source="weekly"></div>
+  </section>
+
   <section class="pw-sec" id="wow">
     <h2><span data-l="ko" lang="ko">품목별 전주 대비 등락률</span><span data-l="en" lang="en" hidden>Change from last week by item</span><span data-l="km" lang="km" hidden>អត្រាប្រែប្រួលធៀបសប្តាហ៍មុន តាមមុខទំនិញ</span></h2>
     <p class="pw-note"><span data-l="ko" lang="ko">금주 평균가격과 전주 평균가격 비교. 막대에 마우스를 올리면 가격이 보입니다.</span><span data-l="en" lang="en" hidden>This week’s average price against last week’s. Point at a bar to see the prices.</span><span data-l="km" lang="km" hidden>ប្រៀបធៀបតម្លៃមធ្យមសប្តាហ៍នេះ និងសប្តាហ៍មុន។ ដាក់ទស្សន៍ទ្រនិចលើរបារ ដើម្បីមើលតម្លៃ។</span></p>
@@ -198,18 +211,6 @@ html,body { margin:0; background:var(--color-bg); color:var(--color-fg); font-si
     <p class="pw-note"><span data-l="ko" lang="ko">금주·전주 가격은 해당 주(월~일) 조사가격의 평균입니다. 조사일수가 1일인 주는 변동이 클 수 있습니다.</span><span data-l="en" lang="en" hidden>Weekly prices are the average of prices collected that week (Monday to Sunday). A week priced on only one day can swing widely.</span><span data-l="km" lang="km" hidden>តម្លៃប្រចាំសប្តាហ៍ គឺជាមធ្យមនៃតម្លៃដែលបានប្រមូលក្នុងសប្តាហ៍នោះ (ច័ន្ទ–អាទិត្យ)។ សប្តាហ៍ដែលមានទិន្នន័យតែ១ថ្ងៃ អាចប្រែប្រួលខ្លាំង។</span></p>
   </section>
 
-  <section class="pw-sec" id="trend">
-    <div class="pw-trendhead">
-      <h2><span data-l="ko" lang="ko">품목별 주간 추이 (최근 13주)</span><span data-l="en" lang="en" hidden>Weekly trend by item (last 13 weeks)</span><span data-l="km" lang="km" hidden>និន្នាការប្រចាំសប្តាហ៍ តាមមុខទំនិញ (១៣សប្តាហ៍ចុងក្រោយ)</span></h2>
-      <label for="f-item" class="pw-note"><span data-l="ko" lang="ko">품목</span><span data-l="en" lang="en" hidden>Item</span><span data-l="km" lang="km" hidden>មុខទំនិញ</span><select class="dash-select" id="f-item" data-draw="itemsel" data-source="weekly" aria-label="Item"></select></label>
-    </div>
-    <ul class="pw-legend" id="trend-legend">
-      <li><span aria-hidden="true" class="pw-sw" data-sw="0"></span><span data-l="ko" lang="ko">올해</span><span data-l="en" lang="en" hidden>This year</span><span data-l="km" lang="km" hidden>ឆ្នាំនេះ</span></li>
-      <li><span aria-hidden="true" class="pw-sw" data-sw="1"></span><span data-l="ko" lang="ko">전년 동주</span><span data-l="en" lang="en" hidden>Same week last year</span><span data-l="km" lang="km" hidden>សប្តាហ៍ដូចគ្នាឆ្នាំមុន</span></li>
-      <li><span aria-hidden="true" class="pw-sw" data-sw="m"></span><span data-l="ko" lang="ko">평년</span><span data-l="en" lang="en" hidden>5-year normal</span><span data-l="km" lang="km" hidden>មធ្យម៥ឆ្នាំ</span></li>
-    </ul>
-    <div class="pw-chartbox" data-draw="trend" data-source="weekly"></div>
-  </section>
 
   <details id="notes">
     <summary><span data-l="ko" lang="ko">용어와 자료 기준</span><span data-l="en" lang="en" hidden>Definitions and data</span><span data-l="km" lang="km" hidden>និយមន័យ និងទិន្នន័យ</span></summary>
@@ -343,7 +344,7 @@ dash.calc('summary', {
     lastYear: { ko: '전년', en: 'Last year', km: 'ឆ្នាំមុន' },
     normal: { ko: '평년', en: 'Normal', km: 'មធ្យម៥ឆ្នាំ' },
     barAria: { ko: '품목별 전주 대비 등락률 막대그래프', en: 'Bar chart of price change from last week by item', km: 'ក្រាហ្វរបារ អត្រាប្រែប្រួលធៀបសប្តាហ៍មុន តាមមុខទំនិញ' },
-    trendAria: { ko: '최근 13주 추이, 전년 동주와 평년 비교', en: 'last 13 weeks, against the same week last year and the 5-year normal', km: '១៣សប្តាហ៍ចុងក្រោយ ធៀបនឹងឆ្នាំមុន និងមធ្យម៥ឆ្នាំ' },
+    trendAria: { ko: '최근 12주 추이, 전년 동주와 평년 비교', en: 'last 12 weeks, against the same week last year and the 5-year normal', km: '១២សប្តាហ៍ចុងក្រោយ ធៀបនឹងឆ្នាំមុន និងមធ្យម៥ឆ្នាំ' },
   };
   const CAT = { '채소': { ko: '채소', en: 'Vegetables', km: 'បន្លែ' }, '과일': { ko: '과일', en: 'Fruits', km: 'ផ្លែឈើ' }, '곡물·두류': { ko: '곡물·두류', en: 'Cereals and pulses', km: 'ធញ្ញជាតិ' }, '기타작물': { ko: '기타작물', en: 'Other crops', km: 'ដំណាំផ្សេងៗទៀត' } };
   const MON = { en: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], km: ['មករា', 'កុម្ភៈ', 'មីនា', 'មេសា', 'ឧសភា', 'មិថុនា', 'កក្កដា', 'សីហា', 'កញ្ញា', 'តុលា', 'វិច្ឆិកា', 'ធ្នូ'] };
@@ -583,9 +584,11 @@ dash.calc('summary', {
     const p = params(); const type = p.type === '소매' ? '소매' : '도매';
     const has = new Set(w.data.filter((r) => r.type === type).map((r) => r.code));
     const code = p.item && has.has(p.item) ? p.item : (has.has('20003') ? '20003' : Array.from(has)[0]);
-    const rows = w.data.filter((r) => r.type === type && r.code === code).sort((a, b) => (a.week < b.week ? -1 : 1));
-    if (!rows.length) { box.textContent = tr('noSeries'); return; }
     const wi = weekInfo();
+    const TREND_WEEKS = 12;
+    const upto = wi ? wi.week : '9999';
+    const rows = w.data.filter((r) => r.type === type && r.code === code && r.week <= upto).sort((a, b) => (a.week < b.week ? -1 : 1)).slice(-TREND_WEEKS);
+    if (!rows.length) { box.textContent = tr('noSeries'); return; }
     const W = Math.max(280, box.clientWidth), H = 240, m = { t: 12, r: 16, b: 28, l: 52 };
     const svg = d3.select(box).append('svg').attr('width', '100%').attr('height', H).attr('viewBox', `0 0 ${W} ${H}`).attr('role', 'img').attr('aria-label', itemName(rows[0]) + ' · ' + (type === '소매' ? tr('retail') : tr('wholesale')) + ' · ' + tr('trendAria'));
     const series = [['price', dash.colors[0], null], ['last_year', dash.colors[1], null], ['normal', 'var(--cds-chart-muted)', '4 3']];
