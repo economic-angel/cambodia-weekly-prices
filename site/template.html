@@ -107,6 +107,10 @@ html,body { margin:0; background:var(--color-bg); color:var(--color-fg); font-si
 .pw-table.pw-v-short .pw-c-l, .pw-table.pw-v-long .pw-c-s { display: none; }
 .pw-table.pw-v-long td.pw-c-l.pw-sep:nth-child(n), .pw-table.pw-v-long th.pw-c-l.pw-sep { border-left: 1px solid var(--color-border-line); }
 .pw-table th.pw-days, .pw-table td.pw-days { font-size: 11px; color: var(--color-fg-muted); font-weight: 400; padding-left: 8px; padding-right: 8px; }
+.pw-key-top { display: flex; align-items: center; justify-content: space-between; gap: var(--cds-gap-sm); }
+.pw-key-info { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.pw-ico.pw-key-ico, .pw-ico.pw-key-ico svg { width: 2.4em; height: 2.4em; }
+.pw-key-ico { font-size: var(--cds-font-size-body); }
 
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
@@ -487,7 +491,12 @@ dash.calc('summary', {
       const card = document.createElement('div'); card.className = 'pw-key';
       const chg = document.createElement('span'); chg.className = 'pw-key-chg';
       chg.append(tr('vsLast'), span(fp(r.wow), { 'data-source': 'cmp', 'data-field': 'wow', 'data-where': 'key=' + enc(r.key) }, cls(r.wow)));
-      card.append(span(itemName(r), {}, 'pw-key-name'), span(fmt(r.cur), { 'data-source': 'cmp', 'data-field': 'cur', 'data-where': 'key=' + enc(r.key) }, 'pw-key-price'), chg);
+      const top = document.createElement('div'); top.className = 'pw-key-top';
+      const info = document.createElement('div'); info.className = 'pw-key-info';
+      info.append(span(itemName(r), {}, 'pw-key-name'), span(fmt(r.cur), { 'data-source': 'cmp', 'data-field': 'cur', 'data-where': 'key=' + enc(r.key) }, 'pw-key-price'));
+      top.append(info);
+      const ic = iconFor(r.code); if (ic) { ic.classList.add('pw-key-ico'); top.append(ic); }
+      card.append(top, chg);
       box.append(card);
     }
   });
